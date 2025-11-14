@@ -1,5 +1,5 @@
 <launch>
-  <node pkg="pointcloud_demo" exec="table" output="screen">
+  <node pkg="o3d_pointcloud" exec="table" output="screen">
     <remap from="pcl_handler" to="/camera/camera/depth/color/points" />
   </node>
 
@@ -8,5 +8,5 @@
     <arg name="pointcloud.enable" value="true" />
   </include>
 
-  <node pkg="rviz2" exec="rviz2" args="-d $(find-pkg-share pointcloud_demo)/config/pcl.rviz" />
+  <node pkg="rviz2" exec="rviz2" args="-d $(find-pkg-share o3d_pointcloud)/pcl.rviz" />
 </launch>
