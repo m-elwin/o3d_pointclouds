@@ -1,0 +1,19 @@
+#+TITLE: ROS 2 Python and Open3D demo
+#+AUTHOR: Matthew Elwin
+
+* Overview
+This demonstration shows how to use ROS 2, Open3D, and a RealSense camera to process pointclouds.
+
+* Setup
+1. Open3D is not available as an Ubuntu package and should be installed via pip.
+2. Use [[https://nu-msr.github.io/ros_notes/ros2/howto/pip.html][these notes]] to create an underlay workspace that you can then use =pip install open3d= to obtain open3d.
+3. The underlay workspace should be sourced when building this package, as a normal ROS workspace.
+
+* Launchfiles
+1. =ros2 launch o3d_pointcloud table_demo.launch.xml= is the main launchfile:
+   - It starts the Realsense camera
+   - It starts =rviz=
+2. In =rviz= various stages of the processing pipeline are visualized (some are off by default, check the boxes to turn them on).
+3. Some parameters (such as the cropbox dimensions) can be adjusted live with =rqt_reconfigure=
+4. The physical setup has the tripod that ships with the realsense full extended with the camera pointing down. The camera is then
+   placed on top of the realsense box. The default field of view in this setup is a rather small portion of a desk.
