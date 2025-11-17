@@ -75,16 +75,16 @@ class TableFind(Node):
 
         # Parameters for the various filters
         cropbox_descriptor = ParameterDescriptor(floating_point_range=[
-            FloatingPointRange(from_value = -1.0,
-                               to_value = 1.0,
+            FloatingPointRange(from_value = -0.5,
+                               to_value = 0.5,
                                step = 0.01)])
         self._params = SimpleNamespace()
-        self._params.xmin = self.declare_parameter("xmin", -1.0, cropbox_descriptor).value
-        self._params.xmax = self.declare_parameter("xmax",  1.0, cropbox_descriptor).value
-        self._params.ymin = self.declare_parameter("ymin", -1.0, cropbox_descriptor).value
-        self._params.ymax = self.declare_parameter("ymax",  1.0, cropbox_descriptor).value
-        self._params.zmin = self.declare_parameter("zmin", -1.0, cropbox_descriptor).value
-        self._params.zmax = self.declare_parameter("zmax",  1.0, cropbox_descriptor).value
+        self._params.xmin = self.declare_parameter("xmin", -0.1, cropbox_descriptor).value
+        self._params.xmax = self.declare_parameter("xmax",  0.3, cropbox_descriptor).value
+        self._params.ymin = self.declare_parameter("ymin", -0.1, cropbox_descriptor).value
+        self._params.ymax = self.declare_parameter("ymax",  0.1, cropbox_descriptor).value
+        self._params.zmin = self.declare_parameter("zmin",  0.1, cropbox_descriptor).value
+        self._params.zmax = self.declare_parameter("zmax",  0.5, cropbox_descriptor).value
 
         self.add_on_set_parameters_callback(self.update_parameters)
 
@@ -148,8 +148,11 @@ class TableFind(Node):
 
     def pcl_handler(self, pcl_msg: PointCloud2):
         """Receive a PointCloud2 message, process with Open3D, and publish results."""
-        # --- Convert ROS2 PointCloud2 to an Open3D point cloud
+        # Convert ROS2 PointCloud2 to an Open3D point cloud
         pcd = ros_to_o3d(pcl_msg)
+
+        # Visualize the cropbox
+        self.draw_cropbox(pcl_msg.header.frame_id)
 
         if len(pcd.points) < 1:
             self.get_logger().warn("Not enough points for cropping.")
@@ -158,8 +161,6 @@ class TableFind(Node):
         # Crop the points based on a bounding box defined by minimum and maximum points
         crop_min = np.array([self._params.xmin, self._params.ymin, self._params.zmin])
         crop_max = np.array([self._params.xmax, self._params.ymax, self._params.zmax])
-        # Visualize the cropbox
-        self.draw_cropbox(pcl_msg.header.frame_id)
 
         bbox = o3d.geometry.AxisAlignedBoundingBox(min_bound=crop_min, max_bound=crop_max)
         pcd_cropped = pcd.crop(bbox)
