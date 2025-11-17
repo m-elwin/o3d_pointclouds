@@ -26,7 +26,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: Voxel
+    SyncSource: InputPoints
 Visualization Manager:
   Class: ""
   Displays:
@@ -93,7 +93,7 @@ Visualization Manager:
       Color: 85; 0; 255
       Color Transformer: FlatColor
       Decay Time: 0
-      Enabled: true
+      Enabled: false
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Max Intensity: 4096
@@ -113,7 +113,7 @@ Visualization Manager:
         Value: /pcl_cropped
       Use Fixed Frame: true
       Use rainbow: true
-      Value: true
+      Value: false
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
@@ -126,7 +126,7 @@ Visualization Manager:
       Color: 255; 0; 127
       Color Transformer: FlatColor
       Decay Time: 0
-      Enabled: true
+      Enabled: false
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Max Intensity: 4096
@@ -146,7 +146,7 @@ Visualization Manager:
         Value: /pcl_voxel
       Use Fixed Frame: true
       Use rainbow: true
-      Value: true
+      Value: false
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
@@ -159,7 +159,7 @@ Visualization Manager:
       Color: 255; 255; 255
       Color Transformer: Intensity
       Decay Time: 0
-      Enabled: true
+      Enabled: false
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Max Intensity: 4096
@@ -179,7 +179,7 @@ Visualization Manager:
         Value: /pcl_inplane
       Use Fixed Frame: true
       Use rainbow: true
-      Value: true
+      Value: false
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
@@ -250,7 +250,7 @@ Visualization Manager:
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: camera_link
+    Fixed Frame: camera_depth_optical_frame
     Frame Rate: 30
   Name: root
   Tools:
@@ -293,25 +293,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 10.437050819396973
+      Distance: 2.5732343196868896
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.17216771841049194
-        Y: -0.0074926260858774185
-        Z: -0.2665899097919464
+        X: 0.606758713722229
+        Y: 0.05879503861069679
+        Z: -0.14516739547252655
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.3302035629749298
+      Pitch: -1.5697963237762451
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 4.8735880851745605
+      Yaw: 0.00041496381163597107
     Saved: ~
 Window Geometry:
   Displays:
@@ -331,5 +331,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 764
-  X: 768
+  X: 814
   Y: 0
