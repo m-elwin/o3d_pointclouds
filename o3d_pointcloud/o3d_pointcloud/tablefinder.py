@@ -3,6 +3,7 @@ Use a 3D camera and Open3D to detect objects that are on a table.
 """
 import rclpy
 from rclpy.node import Node
+from rcl_interfaces.msg import ParameterDescriptor, FloatingPointRange
 from rclpy.qos import QoSDurabilityPolicy, QoSProfile
 from rcl_interfaces.msg import SetParametersResult
 from sensor_msgs.msg import PointCloud2
@@ -12,6 +13,7 @@ import sensor_msgs_py.point_cloud2
 from visualization_msgs.msg import Marker
 import numpy as np
 import open3d as o3d
+from types import SimpleNamespace
 
 def ros_to_o3d(pcl_msg : PointCloud2):
     """Convert A ros2 PointCloud2 message into an Open3D message.
@@ -72,12 +74,17 @@ class TableFind(Node):
         super().__init__("table_find")
 
         # Parameters for the various filters
-        self._xmin = self.declare_parameter("xmin", -1.0).value
-        self._xmax = self.declare_parameter("xmax", 1.0).value
-        self._ymin = self.declare_parameter("ymin", -1.0).value
-        self._ymax = self.declare_parameter("ymax", 1.0).value
-        self._zmin = self.declare_parameter("zmin", -1.0).value
-        self._zmax = self.declare_parameter("zmax", 1.0).value
+        cropbox_descriptor = ParameterDescriptor(floating_point_range=[
+            FloatingPointRange(from_value = -1.0,
+                               to_value = 1.0,
+                               step = 0.01)])
+        self._params = SimpleNamespace()
+        self._params.xmin = self.declare_parameter("xmin", -1.0, cropbox_descriptor).value
+        self._params.xmax = self.declare_parameter("xmax",  1.0, cropbox_descriptor).value
+        self._params.ymin = self.declare_parameter("ymin", -1.0, cropbox_descriptor).value
+        self._params.ymax = self.declare_parameter("ymax",  1.0, cropbox_descriptor).value
+        self._params.zmin = self.declare_parameter("zmin", -1.0, cropbox_descriptor).value
+        self._params.zmax = self.declare_parameter("zmax",  1.0, cropbox_descriptor).value
 
         self.add_on_set_parameters_callback(self.update_parameters)
 
@@ -100,14 +107,14 @@ class TableFind(Node):
         frame (Str) - the name of the frame in which to draw the marker
         """
         # define the box's vertices
-        v1 = Point(x=self._xmin, y=self._ymin, z=self._zmin)
-        v2 = Point(x=self._xmax, y=self._ymin, z=self._zmin)
-        v3 = Point(x=self._xmax, y=self._ymin, z=self._zmax)
-        v4 = Point(x=self._xmin, y=self._ymin, z=self._zmax)
-        v5 = Point(x=self._xmin, y=self._ymax, z=self._zmin)
-        v6 = Point(x=self._xmax, y=self._ymax, z=self._zmin)
-        v7 = Point(x=self._xmax, y=self._ymax, z=self._zmax)
-        v8 = Point(x=self._xmin, y=self._ymax, z=self._zmax)
+        v1 = Point(x=self._params.xmin, y=self._params.ymin, z=self._params.zmin)
+        v2 = Point(x=self._params.xmax, y=self._params.ymin, z=self._params.zmin)
+        v3 = Point(x=self._params.xmax, y=self._params.ymin, z=self._params.zmax)
+        v4 = Point(x=self._params.xmin, y=self._params.ymin, z=self._params.zmax)
+        v5 = Point(x=self._params.xmin, y=self._params.ymax, z=self._params.zmin)
+        v6 = Point(x=self._params.xmax, y=self._params.ymax, z=self._params.zmin)
+        v7 = Point(x=self._params.xmax, y=self._params.ymax, z=self._params.zmax)
+        v8 = Point(x=self._params.xmin, y=self._params.ymax, z=self._params.zmax)
 
         self._marker.publish(
             Marker(
@@ -136,7 +143,7 @@ class TableFind(Node):
     def update_parameters(self, params):
         """Update parameters. All parameters are listed as self._(paramname) in this class."""
         for p in params:
-            setattr(self, f"_{p.name}", p.value)
+            setattr(self._params, p.name, p.value)
         return SetParametersResult(successful=True)
 
     def pcl_handler(self, pcl_msg: PointCloud2):
@@ -149,8 +156,8 @@ class TableFind(Node):
             return
 
         # Crop the points based on a bounding box defined by minimum and maximum points
-        crop_min = np.array([self._xmin, self._ymin, self._zmin])
-        crop_max = np.array([self._xmax, self._ymax, self._zmax])
+        crop_min = np.array([self._params.xmin, self._params.ymin, self._params.zmin])
+        crop_max = np.array([self._params.xmax, self._params.ymax, self._params.zmax])
         # Visualize the cropbox
         self.draw_cropbox(pcl_msg.header.frame_id)
 
