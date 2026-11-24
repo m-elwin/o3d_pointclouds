@@ -7,6 +7,7 @@ import numpy as np
 import open3d as o3d
 from rcl_interfaces.msg import FloatingPointRange, ParameterDescriptor, SetParametersResult
 import rclpy
+from rclpy.executors import ExternalShutdownException
 from rclpy.node import Node
 from rclpy.qos import QoSDurabilityPolicy, QoSProfile
 from sensor_msgs.msg import PointCloud2
@@ -168,7 +169,7 @@ class TableFind(Node):
         self.draw_cropbox(pcl_msg.header.frame_id)
 
         if len(pcd.points) < 1:
-            self.get_logger().warn('Not enough points for cropping.')
+            self.get_logger().warning('Not enough points for cropping.')
             return
 
         # Crop the points based on a bounding box defined by minimum and maximum points
@@ -190,7 +191,7 @@ class TableFind(Node):
         # Plane segmentation
         # we need at least some points for the segmentation to work well
         if len(pcd_voxel.points) < 10:
-            self.get_logger().warn('Not enough points for segmentation.')
+            self.get_logger().warning('Not enough points for segmentation.')
             return
 
         plane_model, inliers = pcd_voxel.segment_plane(
@@ -200,7 +201,7 @@ class TableFind(Node):
         )
 
         if len(inliers) == 0:
-            self.get_logger().warn('No plane found.')
+            self.get_logger().warning('No plane found.')
             return
 
         # Extract inliers (points lying on the plane)
@@ -213,7 +214,9 @@ class TableFind(Node):
 
 
 def table_entry(args=None):
-    rclpy.init(args=args)
-    node = TableFind()
-    rclpy.spin(node)
-    rclpy.shutdown()
+    try:
+        with rclpy.init(args=args):
+            node = TableFind()
+            rclpy.spin(node)
+    except (KeyboardInterrupt, ExternalShutdownException):
+        pass

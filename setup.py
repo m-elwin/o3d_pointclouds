@@ -18,7 +18,11 @@ setup(
     maintainer_email='elwin@northwestern.edu',
     description='Demonstrate Point Cloud Processing with Open3D',
     license='MIT',
-    tests_require=['pytest'],
+    extras_require={
+        'test': [
+            'pytest',
+            ],
+        },
     entry_points={
         'console_scripts': [
             'table = o3d_pointcloud.tablefinder:table_entry'
